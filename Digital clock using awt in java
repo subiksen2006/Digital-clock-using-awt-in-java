@@ -1,0 +1,171 @@
+import java.awt.*;  
+import java.awt.event.*;  
+import java.util.*;  
+  
+public class DigitalClock extends Frame {  
+    private Label timeLabel;  
+    private Label dateLabel;  
+    private Choice fontChoice;  
+    private Choice textColorChoice;  
+    private Choice bgColorChoice;  
+    private Button exitButton;  
+    private Button startStopButton;  
+    private Timer timer;  
+    private boolean isRunning = true;  
+  
+    public DigitalClock() {  
+        // Initialize time and date labels  
+        timeLabel = new Label();  
+        timeLabel.setFont(new Font("Arial", Font.BOLD, 40));  
+        timeLabel.setAlignment(Label.CENTER);  
+  
+        dateLabel = new Label();  
+        dateLabel.setFont(new Font("Arial", Font.PLAIN, 20));  
+        dateLabel.setAlignment(Label.CENTER);  
+  
+        // Font choice dropdown  
+        fontChoice = new Choice();  
+        fontChoice.add("Arial");  
+        fontChoice.add("Courier");  
+        fontChoice.add("Times New Roman");  
+        fontChoice.add("Verdana");  
+        fontChoice.addItemListener(e -> updateFont());  
+  
+        // Text color dropdown  
+        textColorChoice = new Choice();  
+        textColorChoice.add("Black");  
+        textColorChoice.add("Red");  
+        textColorChoice.add("Blue");  
+        textColorChoice.add("Green");  
+        textColorChoice.add("Orange");  
+        textColorChoice.addItemListener(e -> updateTextColor());  
+  
+        // Background color dropdown  
+        bgColorChoice = new Choice();  
+        bgColorChoice.add("White");  
+        bgColorChoice.add("Gray");  
+        bgColorChoice.add("Yellow");  
+        bgColorChoice.add("Pink");  
+        bgColorChoice.add("Cyan");  
+        bgColorChoice.addItemListener(e -> updateBackgroundColor());  
+  
+        // Start/Stop button  
+        startStopButton = new Button("Stop");  
+        startStopButton.addActionListener(e -> toggleClock());  
+  
+        // Exit button  
+        exitButton = new Button("Exit");  
+        exitButton.addActionListener(e -> System.exit(0));  
+  
+        // Organize controls  
+        Panel controlPanel = new Panel();  
+        controlPanel.setLayout(new FlowLayout());  
+        controlPanel.add(new Label("Font:"));  
+        controlPanel.add(fontChoice);  
+        controlPanel.add(new Label("Text Color:"));  
+        controlPanel.add(textColorChoice);  
+        controlPanel.add(new Label("Background:"));  
+        controlPanel.add(bgColorChoice);  
+        controlPanel.add(startStopButton);  
+        controlPanel.add(exitButton);  
+  
+        // Set layout and add components  
+        setLayout(new BorderLayout());  
+        add(timeLabel, BorderLayout.CENTER);  
+        add(dateLabel, BorderLayout.SOUTH);  
+        add(controlPanel, BorderLayout.NORTH);  
+  
+        // Window properties  
+        setTitle("Enhanced Digital Clock");  
+        setSize(600, 300);  
+        setVisible(true);  
+        addWindowListener(new WindowAdapter() {  
+            public void windowClosing(WindowEvent e) {  
+                dispose();  
+            }  
+        });  
+  
+        // Start the clock  
+        startTimer();  
+    }  
+  
+    private void startTimer() {  
+        timer = new Timer();  
+        timer.scheduleAtFixedRate(new TimerTask() {  
+            @Override  
+            public void run() {  
+                if (isRunning) {  
+                    Calendar calendar = Calendar.getInstance();  
+                    String time = String.format("%02d:%02d:%02d",  
+                            calendar.get(Calendar.HOUR_OF_DAY),  
+                            calendar.get(Calendar.MINUTE),  
+                            calendar.get(Calendar.SECOND));  
+                    String date = String.format("%1$tA, %1$tB %1$td, %1$tY", new Date());  
+  
+                    timeLabel.setText(time);  
+                    dateLabel.setText(date);  
+                }  
+            }  
+        }, 0, 1000);  
+    }  
+  
+    private void updateFont() {  
+        String selectedFont = fontChoice.getSelectedItem();  
+        timeLabel.setFont(new Font(selectedFont, Font.BOLD, 40));  
+        dateLabel.setFont(new Font(selectedFont, Font.PLAIN, 20));  
+    }  
+  
+    private void updateTextColor() {  
+        String selectedColor = textColorChoice.getSelectedItem();  
+        Color color;  
+        switch (selectedColor) {  
+            case "Red":  
+                color = Color.RED;  
+                break;  
+            case "Blue":  
+                color = Color.BLUE;  
+                break;  
+            case "Green":  
+                color = Color.GREEN;  
+                break;  
+            case "Orange":  
+                color = Color.ORANGE;  
+                break;  
+            default:  
+                color = Color.BLACK;  
+        }  
+        timeLabel.setForeground(color);  
+        dateLabel.setForeground(color);  
+    }  
+  
+    private void updateBackgroundColor() {  
+        String selectedColor = bgColorChoice.getSelectedItem();  
+        Color color;  
+        switch (selectedColor) {  
+            case "Gray":  
+                color = Color.GRAY;  
+                break;  
+            case "Yellow":  
+                color = Color.YELLOW;  
+                break;  
+            case "Pink":  
+                color = Color.PINK;  
+                break;  
+            case "Cyan":  
+                color = Color.CYAN;  
+                break;  
+            default:  
+                color = Color.WHITE;  
+        }  
+        setBackground(color);  
+    }  
+  
+    private void toggleClock() {  
+        isRunning = !isRunning;  
+        startStopButton.setLabel(isRunning ? "Stop" : "Start");  
+    }  
+  
+    public static void main(String[] args) {  
+        new DigitalClock();  
+    }  
+}
